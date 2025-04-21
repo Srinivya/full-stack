@@ -1,20 +1,22 @@
-import "./App.css";
-import Login from "./Components/Login";
-import OTPVerification from "./Components/OTPVerification";
-import SignUp from "./Components/SignUp";
-import DashBoard from "./Components/DashBoard";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import SignupForm from "./Components/SignupForm";
+import OtpVerificationForm from "./Components/OtpVerificationForm";
+import LoginForm from "./Components/LoginForm";
+import Dashboard from "./Components/Dashboard";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify-otp" element={<OTPVerification />} />
-        <Route path="/dashboard" element={<DashBoard />} />
-       
-      </Routes>
+      <div>
+        <h1>Welcome to the User Authentication App</h1>
+        <Routes>
+          <Route path="/" element={<SignupForm />} />
+          <Route path="/verify" element={<OtpVerificationForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
