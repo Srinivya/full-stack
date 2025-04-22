@@ -19,7 +19,7 @@ const LoginForm = () => {
       );
 
       if (response.data === "Login successful!") {
-        navigate("/dashboard");
+        navigate("/home", { state: { email } }); 
       } else {
         setMessage("Login failed. Please try again.");
       }

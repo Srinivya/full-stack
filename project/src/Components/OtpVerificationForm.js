@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const OtpVerificationForm = () => {
   const [email, setEmail] = useState("");
@@ -46,10 +47,17 @@ const OtpVerificationForm = () => {
             style={styles.input}
           />
         </div>
-        <button type="submit" style={styles.button}>Verify OTP</button>
+        <button type="submit" style={styles.button}>
+          Verify OTP
+        </button>
       </form>
 
       {message && <p style={styles.message}>{message}</p>}
+      <p style={styles.linkText}>
+        <Link to="/login" style={styles.link}>
+          Go to Login
+        </Link>
+      </p>
     </div>
   );
 };
@@ -94,6 +102,15 @@ const styles = {
     marginTop: "15px",
     color: "green",
     textAlign: "center",
+  },
+  linkText: {
+    textAlign: "center",
+    marginTop: "10px",
+  },
+  link: {
+    color: "#007bff",
+    textDecoration: "underline",
+    fontSize: "16px",
   },
 };
 

@@ -1,0 +1,72 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo-text h1 {
+  margin: 0;
+  color: rgb(15, 129, 199);
+  font-size: 1.5rem;
+}
+
+.logo-text p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: gray;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: rgb(15, 129, 199);
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  width: 150px;
+  z-index: 100;
+}
+
+.dropdown-menu p {
+  margin: 0;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-menu p:hover {
+  background-color: #f0f0f0;
+}

@@ -6,6 +6,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -18,10 +19,15 @@ const SignupForm = () => {
         data
       );
       setMessage(response.data);
-      navigate("/verify");
+      setIsModalVisible(true);
     } catch (error) {
       setMessage(error.response?.data || "An error occurred");
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    navigate("/verify"); 
   };
 
   return (
@@ -57,9 +63,22 @@ const SignupForm = () => {
       {message && (
         <div style={styles.messageBox}>
           <p>{message}</p>
-          <p>
-            Got your OTP? <Link to="/verify">Click here to verify</Link>
-          </p>
+          {message.includes("OTP sent to your email") && (
+            <p>
+              Got your OTP? <Link to="/verify">Click here to verify</Link>
+            </p>
+          )}
+        </div>
+      )}
+
+      {isModalVisible && (
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <h3>OTP sent successfully!</h3>
+            <button onClick={handleCloseModal} style={styles.button}>
+              Close and Proceed to Verification
+            </button>
+          </div>
         </div>
       )}
 
@@ -112,6 +131,23 @@ const styles = {
     backgroundColor: "#e6f7ff",
     border: "1px solid #91d5ff",
     borderRadius: "5px",
+  },
+  modal: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "10px",
+    textAlign: "center",
   },
 };
 
