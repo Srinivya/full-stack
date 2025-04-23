@@ -1,156 +1,82 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Header from "./Header";
 import "./ProfilPage.css";
 
+
 const ProfilePage = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [image, setImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const fileInputRef = useRef(null);
+  const [user, setUser] = useState({ name: "", address: "", phone: "" });
+  const email = sessionStorage.getItem("email");
 
   useEffect(() => {
-    // Get email from the JWT token stored in localStorage
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setErrorMessage("User not authenticated.");
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchProfile = async () => {
-      try {
-        // Make API call to fetch the user profile
-        const response = await axios.get("http://localhost:8070/user/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    if (email) {
+      axios
+        .get(`http://localhost:8070/user/getProfile?email=${email}`)
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((err) => {
+          console.error("Failed to load profile", err);
         });
-
-        setEmail(response.data.email);
-        setName(response.data.name);
-        setAddress(response.data.address);
-        if (response.data.imageUrl) {
-          setPreviewUrl(
-            `http://localhost:8070/images/${response.data.imageUrl}`
-          );
-        }
-        setIsLoading(false);
-      } catch (error) {
-        setErrorMessage("Failed to load profile.");
-        setIsLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      alert("Please upload a valid image file (JPG, PNG).");
-      setImage(null);
-      setPreviewUrl(null);
     }
+  }, [email]);
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleSave = () => {
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("name", name);
-    formData.append("address", address);
-    if (image) {
-      formData.append("image", image);
-    }
-
+  const handleUpdate = () => {
     axios
-      .put("http://localhost:8070/user/update", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
+      .post("http://localhost:8070/user/updateProfile", null, {
+        params: {
+          email: email,
+          name: user.name,
+          address: user.address,
+          phone: user.phone,
         },
       })
-      .then((response) => {
-        alert("Profile updated successfully!");
+      .then((res) => {
+        alert(res.data);
       })
-      .catch((error) => {
+      .catch((err) => {
         alert("Failed to update profile");
+        console.error(err);
       });
   };
 
-  return (
-    <div className="profile-container">
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : errorMessage ? (
-        <p>{errorMessage}</p>
-      ) : (
-        <div className="profile-content">
-          <div className="profile-header">
-            <div className="profile-email-container">
-              <span className="profile-email">{email}</span>
-            </div>
-            <div className="profile-image">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Profile"
-                  width="100"
-                  height="100"
-                  style={{ borderRadius: "50%" }}
-                />
-              ) : (
-                <div className="default-avatar">No Image</div>
-              )}
-              <button type="button" onClick={handleButtonClick}>
-                Upload Image
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg, image/png"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-              />
-            </div>
-          </div>
+  if (!email) return <p>Please log in to view your profile.</p>;
 
-          <div className="profile-info">
-            <div className="profile-field">
-              <label htmlFor="name">Name:</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-              />
-            </div>
-            <div className="profile-field">
-              <label htmlFor="address">Address:</label>
-              <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter your address"
-              />
-            </div>
-            <button onClick={handleSave}>Save</button>
-          </div>
-        </div>
-      )}
+  return (
+    <div style={{ padding: "20px" }}>
+         <Header email={email} />
+         <div className="profile-container">
+      <h2>Profile</h2>
+      <label>Name:</label>
+      <input
+        type="text"
+        name="name"
+        value={user.name}
+        onChange={handleChange}
+      />
+      <br />
+      <label>Address:</label>
+      <input
+        type="text"
+        name="address"
+        value={user.address}
+        onChange={handleChange}
+      />
+      <br />
+      <label>Phone:</label>
+      <input
+        type="text"
+        name="phone"
+        value={user.phone}
+        onChange={handleChange}
+      />
+      <br />
+      <button onClick={handleUpdate}>Update Profile</button>
+    </div>
     </div>
   );
 };

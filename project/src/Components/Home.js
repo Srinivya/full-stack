@@ -1,15 +1,20 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 
-
 const Home = () => {
-  const location = useLocation();
-  const email = location.state?.email || "";
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
 
   return (
     <div>
       <Header email={email} />
+    
     </div>
   );
 };

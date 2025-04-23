@@ -11,14 +11,15 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     const data = { email, password };
-
+  
     try {
       const response = await axios.post(
         "http://localhost:8070/user/login",
         data
       );
-
+  
       if (response.data === "Login successful!") {
+        sessionStorage.setItem("email", email); 
         navigate("/home", { state: { email } }); 
       } else {
         setMessage("Login failed. Please try again.");
@@ -27,6 +28,7 @@ const LoginForm = () => {
       setMessage(error.response?.data || "Login failed");
     }
   };
+  
 
   return (
     <div style={styles.container}>

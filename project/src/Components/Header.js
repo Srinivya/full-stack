@@ -1,14 +1,24 @@
-import React, { useState } from "react";
-import "./Header.css";
+import React, { useState, useEffect } from "react";
 import logo from "../Assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import "./Header.css";
 
 const Header = ({ email }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [userEmail, setUserEmail] = useState(email);
   const navigate = useNavigate();
-  const firstLetter = email?.charAt(0).toUpperCase() || "";
+
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("email");
+    if (storedEmail && storedEmail !== userEmail) {
+      setUserEmail(storedEmail);
+    }
+  }, [email, userEmail]);
+
+  const firstLetter = userEmail?.charAt(0).toUpperCase() || "";
 
   const handleLogout = () => {
+    sessionStorage.clear();
     navigate("/");
   };
 
