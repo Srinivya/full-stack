@@ -6,7 +6,8 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [otpSuccess, setOtpSuccess] = useState(false);
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -15,20 +16,56 @@ const SignupForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8070/user/signup",
+        "http://localhost:8070/auth/signup",
         data
       );
-      setMessage(response.data);
-      setIsModalVisible(true);
+      console.log(response.data);
+      setOtpSuccess(true);
     } catch (error) {
       setMessage(error.response?.data || "An error occurred");
     }
   };
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-    navigate("/verify"); 
+  const handleOtpVerification = async (e) => {
+    e.preventDefault();
+
+    const data = { email, otp };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8070/auth/verify",
+        data
+      );
+      navigate("/login");
+    } catch (error) {
+      setMessage(error.response?.data || "An error occurred");
+    }
   };
+
+  if (otpSuccess) {
+    return (
+      <div style={styles.container}>
+        <h2 style={styles.title}>Verify OTP</h2>
+        <form onSubmit={handleOtpVerification} style={styles.form}>
+          <h3>OTP sent successfully! Type you OTP here</h3>
+          <div style={styles.formGroup}>
+            <label>OTP:</label>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              style={styles.input}
+            />
+          </div>
+          <button type="submit" style={styles.button}>
+            Verify OTP
+          </button>
+          {message && <p>{message}</p>}
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
@@ -58,29 +95,9 @@ const SignupForm = () => {
         <button type="submit" style={styles.button}>
           Sign Up
         </button>
+
+        {message && <p>{message}</p>}
       </form>
-
-      {message && (
-        <div style={styles.messageBox}>
-          <p>{message}</p>
-          {message.includes("OTP sent to your email") && (
-            <p>
-              Got your OTP? <Link to="/verify">Click here to verify</Link>
-            </p>
-          )}
-        </div>
-      )}
-
-      {isModalVisible && (
-        <div style={styles.modal}>
-          <div style={styles.modalContent}>
-            <h3>OTP sent successfully!</h3>
-            <button onClick={handleCloseModal} style={styles.button}>
-              Close and Proceed to Verification
-            </button>
-          </div>
-        </div>
-      )}
 
       <p style={{ marginTop: "10px" }}>
         Already have an account? <Link to="/login">Login here</Link>
@@ -94,60 +111,58 @@ const styles = {
     maxWidth: "400px",
     margin: "50px auto",
     padding: "30px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    backgroundColor: "#f9f9f9",
-    fontFamily: "Arial, sans-serif",
+    border: "1px solid #ddd",
+    borderRadius: "12px",
+    backgroundColor: "#ffffff",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
   },
   title: {
     textAlign: "center",
-    color: "#333",
+    color: "#2c3e50",
+    marginBottom: "20px",
+    fontSize: "24px",
+    fontWeight: "bold",
   },
   form: {
     display: "flex",
     flexDirection: "column",
   },
   formGroup: {
-    marginBottom: "15px",
+    marginBottom: "16px",
   },
   input: {
     width: "100%",
-    padding: "8px",
+    padding: "10px",
     marginTop: "5px",
-    borderRadius: "5px",
+    borderRadius: "6px",
     border: "1px solid #ccc",
+    fontSize: "14px",
   },
   button: {
     padding: "10px",
-    backgroundColor: "#007bff",
-    color: "white",
+    backgroundColor: "#3498db",
+    color: "#fff",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "6px",
     cursor: "pointer",
+    fontSize: "16px",
+    transition: "background-color 0.3s",
   },
-  messageBox: {
+  message: {
     marginTop: "15px",
-    padding: "10px",
-    backgroundColor: "#e6f7ff",
-    border: "1px solid #91d5ff",
-    borderRadius: "5px",
-  },
-  modal: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "10px",
     textAlign: "center",
+    color: "red",
+  },
+  linkText: {
+    textAlign: "center",
+    marginTop: "15px",
+    fontSize: "14px",
+  },
+  link: {
+    color: "#3498db",
+    textDecoration: "none",
+    fontWeight: "bold",
   },
 };
 

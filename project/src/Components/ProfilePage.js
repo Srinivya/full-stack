@@ -3,7 +3,6 @@ import axios from "axios";
 import Header from "./Header";
 import "./ProfilPage.css";
 
-
 const ProfilePage = () => {
   const [user, setUser] = useState({ name: "", address: "", phone: "" });
   const email = sessionStorage.getItem("email");
@@ -11,7 +10,7 @@ const ProfilePage = () => {
   useEffect(() => {
     if (email) {
       axios
-        .get(`http://localhost:8070/user/getProfile?email=${email}`)
+        .get(`http://localhost:8070/auth/getProfile?email=${email}`)
         .then((res) => {
           setUser(res.data);
         })
@@ -27,7 +26,7 @@ const ProfilePage = () => {
 
   const handleUpdate = () => {
     axios
-      .post("http://localhost:8070/user/updateProfile", null, {
+      .post("http://localhost:8070/auth/updateProfile", null, {
         params: {
           email: email,
           name: user.name,
@@ -48,35 +47,35 @@ const ProfilePage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-         <Header email={email} />
-         <div className="profile-container">
-      <h2>Profile</h2>
-      <label>Name:</label>
-      <input
-        type="text"
-        name="name"
-        value={user.name}
-        onChange={handleChange}
-      />
-      <br />
-      <label>Address:</label>
-      <input
-        type="text"
-        name="address"
-        value={user.address}
-        onChange={handleChange}
-      />
-      <br />
-      <label>Phone:</label>
-      <input
-        type="text"
-        name="phone"
-        value={user.phone}
-        onChange={handleChange}
-      />
-      <br />
-      <button onClick={handleUpdate}>Update Profile</button>
-    </div>
+      <Header email={email} />
+      <div className="profile-container">
+        <h2>Profile</h2>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={user.name}
+          onChange={handleChange}
+        />
+        <br />
+        <label>Address:</label>
+        <input
+          type="text"
+          name="address"
+          value={user.address}
+          onChange={handleChange}
+        />
+        <br />
+        <label>Phone:</label>
+        <input
+          type="text"
+          name="phone"
+          value={user.phone}
+          onChange={handleChange}
+        />
+        <br />
+        <button onClick={handleUpdate}>Update Profile</button>
+      </div>
     </div>
   );
 };
